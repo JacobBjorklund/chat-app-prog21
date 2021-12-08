@@ -4,13 +4,13 @@ import { getFirestore, query, collection, onSnapshot, orderBy, addDoc, Timestamp
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCvKzLop1BOZn701uMQkYwt7wL1n7BmmTQ",
-    authDomain: "chat-95996.firebaseapp.com",
-    projectId: "chat-95996",
-    storageBucket: "chat-95996.appspot.com",
-    messagingSenderId: "739488295817",
-    appId: "1:739488295817:web:f20cfc238d8432c5538f58"
-}
+    apiKey: "AIzaSyDNjIEFfborFcreOMGFPZyhzcsyMF3s-MU",
+    authDomain: "chat-app-fae41.firebaseapp.com",
+    projectId: "chat-app-fae41",
+    storageBucket: "chat-app-fae41.appspot.com",
+    messagingSenderId: "147293462691",
+    appId: "1:147293462691:web:1174036f74cd178dde5f16"
+};
 
 // Initialize Firebase
 initializeApp(firebaseConfig)
@@ -62,16 +62,18 @@ const initDb = () => {
     onSnapshot(q, (snapshot) => {
         snapshot.docChanges().forEach((change) => {
             const data = change.doc.data()
+            const niceTimestamp = new Date(data.timestamp.toDate()).toLocaleTimeString('fi-Fi')
             const main = document.getElementById('main')
             const li = document.createElement('li')
 
             li.innerHTML = `
-            <span class="fw-light text-muted">${data.timestamp}</span>
-            <span class="fw-bold text-muted">${data.username}</span>
+            <span class="fw-light text-muted">${niceTimestamp}</span>
+            <span class="fw-bold text-muted">${data.userName}</span>
             <span class="fw-bold px-2">${data.message}</span>
             `
 
             document.getElementById('messages').appendChild(li)
+            main.scrollTop = main.scrollHeight // scroll to the bottom
         })
     })
 
@@ -80,6 +82,9 @@ const initDb = () => {
     const newMessage = async e => {
         e.preventDefault() // don't reload page on submit
 
+        if (!document.getElementById('input').value) {
+            return
+        }
         try {
             // Add to database
             await addDoc(collection(db, "messages"), {
